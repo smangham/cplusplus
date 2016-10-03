@@ -2,30 +2,31 @@
 
 #include <iostream>
 
-void draw( int particlePosition, char particleSymbol ) {
-  for (int i = 0; i < particlePosition; i++) {
+const int maxColumn = 80;
+const int minColumn = 0;
+
+
+void draw( int position, char symbol ) {
+  for (int i = 0; i < position; i++) {
     std::cout << " ";
   }
-  std::cout << particleSymbol << std::endl;
+  std::cout << symboll<< std::endl;
 }
 
-void move( double& particlePosition, double& particleSpeed, 
-           int minColumn, int maxColumn ) {
-  particlePosition += particleSpeed;
+void move( double& position, double& speed ) {
+  position += speed;
 
-  if (particlePosition >= maxColumn) {
-    particlePosition = maxColumn;
-    particleSpeed = -particleSpeed;
-  } else if (particlePosition < minColumn) {
-    particlePosition = minColumn;
-    particleSpeed = -particleSpeed;
+  if (position >= maxColumn) {
+    position = maxColumn;
+    speed = -speed;
+  } else if (position < minColumn) {
+    position = minColumn;
+    speed = -speed;
   } 
 }
 
 int main() {
   char particleSymbol = 'x';
-  int maxColumn = 80;
-  int minColumn = 0;
   int timeStep = 0;
   int stopTime = 60;
   double particlePosition = minColumn;
@@ -33,7 +34,7 @@ int main() {
 
   while (timeStep < stopTime) {
     draw(particlePosition, particleSymbol);
-    move(particlePosition, particleSpeed, minColumn, maxColumn);
+    move(particlePosition, particleSpeed);
     timeStep++;
   }
 }
