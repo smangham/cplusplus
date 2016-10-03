@@ -6,7 +6,7 @@ const int maxColumn = 80;
 const int minColumn = 0;
 
 
-void draw( int position, char symbol ) {
+void draw( const int position, const char symbol ) {
   for (int i = 0; i < position; i++) {
     std::cout << " ";
   }
@@ -26,9 +26,9 @@ void move( double& position, double& speed ) {
 }
 
 int main() {
-  char particleSymbol = 'x';
+  const char particleSymbol = 'x';
   int timeStep = 0;
-  int stopTime = 60;
+  const int stopTime = 60;
   double particlePosition = minColumn;
   double particleSpeed = 6.3;
 
