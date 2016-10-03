@@ -10,7 +10,7 @@ void draw( int position, char symbol ) {
   for (int i = 0; i < position; i++) {
     std::cout << " ";
   }
-  std::cout << symboll<< std::endl;
+  std::cout << symbol<< std::endl;
 }
 
 void move( double& position, double& speed ) {
