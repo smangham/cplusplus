@@ -2,10 +2,12 @@
 
 #include <iostream>
 
-void screen_clear(), screen_flush();
-void screen_draw(const double, const double, const char);
+void screen_clear(char[]), screen_print(char[]);
+void screen_draw(const double, const double, const char, char[]);
 bool charvalid(const char);
 
+const char tail_short = ' ';
+const char tail_long = '~';
 const int maxColumn = 79;
 const int minColumn =  0;
 char screen[maxColumn];
@@ -16,7 +18,7 @@ void move( double& position, double& speed ) {
   if (position >= maxColumn) {
     position = maxColumn;
     speed = -speed;
-  } else if (position < minColumn) {
+  } else if (position <= minColumn) {
     position = minColumn;
     speed = -speed;
   } 
@@ -25,44 +27,52 @@ void move( double& position, double& speed ) {
 int main() {
   int timeStep = 0;
   const int stopTime = 60;
-  int num_particles = 5;
-  double position[5] = {0, 79, 7, 8, 10};
-  double speed[5] = {6.3, -4, 3, 1, -8};
-  const char symbol[5] = {'x','y','z','@','#'};
-  
+  const int num_particles = 5;
+  double position[num_particles] =    {0,   79,   7,    50,   60};
+  double speed[num_particles] =       {6.3, -4,   3,    1,    -5};
+  const char symbol[num_particles] =  {'x', '+',  'o',  '@',  '#'};
+  char screen_a[maxColumn+1];
+  char screen_b[maxColumn+1];
 
   while (timeStep < stopTime) {
-    screen_clear();
+    screen_clear(screen_a);
     for(int i=0; i<num_particles; i++)
     {
-      screen_draw(position[i], speed[i], symbol[i]);
+      screen_draw(position[i], speed[i], symbol[i], screen_a);
       move(position[i], speed[i]);
     }
-    screen_flush();
+    screen_print(screen_a);
     timeStep++;
   }
 }
 
-void screen_clear() {
+void screen_clear( char screen[] ) {
   for (int i = 0; i <= maxColumn; i++) {
     screen[i] = ' ';
   }  
 }
 
-void screen_draw( const double position, const double speed, const char symbol ) {
+void screen_draw( 
+    const double position, const double speed, 
+    const char symbol, char screen[])
+{
   int ipos = static_cast<int>(position);
   screen[ipos] = symbol;
   // if(speed < 0.0) {
-  //   if(position < maxColumn-1 && charvalid(screen[ipos+1])) screen[ipos+1] = '=';
-  //   if(position < maxColumn-2 && charvalid(screen[ipos+2])) screen[ipos+2] = '-';
+  //   if(position < maxColumn-1 && charvalid(screen[ipos+1])) screen[ipos+1] = tail_long;
+  //   if(position < maxColumn-2 && charvalid(screen[ipos+2])) screen[ipos+2] = tail_short;
   // } else {
-  //   if(position > minColumn+1 && charvalid(screen[ipos-1])) screen[ipos-1] = '=';
-  //   if(position > minColumn+2 && charvalid(screen[ipos-2])) screen[ipos-2] = '-';
+  //   if(position > minColumn+1 && charvalid(screen[ipos-1])) screen[ipos-1] = tail_long;
+  //   if(position > minColumn+2 && charvalid(screen[ipos-2])) screen[ipos-2] = tail_short;
   // }
 }
 
-void screen_flush() {
-  std::cout << screen << std::endl;
+void screen_print( char screen[80] ) {
+  for(int i=0; i<=maxColumn; i++)
+  {
+    std::cout << screen[i];
+  }
+  std::cout << std::endl;
 }
 
 bool charvalid( const char test ) {
