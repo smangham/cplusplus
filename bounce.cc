@@ -5,12 +5,12 @@
 int main() {
 
   char particleSymbol = 'x';
-  double particlePosition = 0;
-  double particleSpeed = 6.3;
   int maxColumn = 80;
   int minColumn = 0;
   int timeStep = 0;
   int stopTime = 60;
+  double particlePosition = minColumn;
+  double particleSpeed = 6.3;
 
   while (timeStep < stopTime) {
     for (int i = 0; i < particlePosition; i++) {
