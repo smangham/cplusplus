@@ -11,7 +11,7 @@ const int minColumn =  0;
 class Screen {
 private:
   char *screen;
-  int width;
+  unsigned width;
 public:
   void draw( const int pos, const char sym ) {
     if(pos >= 0 && pos < this->width && charvalid(this->screen[pos]))
@@ -19,7 +19,7 @@ public:
       this->screen[pos] = sym;
     }
   }
-  void init( int width ) {
+  void init( unsigned width ) {
     this->screen = new char[width];
     this->width = width;
   }
