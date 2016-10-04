@@ -31,19 +31,19 @@ int main() {
   double position[num_particles] =    {0,   79,   7,    50,   60};
   double speed[num_particles] =       {6.3, -4,   3,    1,    -5};
   const char symbol[num_particles] =  {'x', '+',  'o',  '@',  '#'};
-  char screen_a[maxColumn+1];
-  char screen_b[maxColumn+1];
+  char* screen = new char[maxColumn+1];
 
   while (timeStep < stopTime) {
-    screen_clear(screen_a);
+    screen_clear(screen);
     for(int i=0; i<num_particles; i++)
     {
-      screen_draw(position[i], speed[i], symbol[i], screen_a);
+      screen_draw(position[i], speed[i], symbol[i], screen);
       move(position[i], speed[i]);
     }
-    screen_print(screen_a);
+    screen_print(screen);
     timeStep++;
   }
+  delete [] screen;
 }
 
 void screen_clear( char screen[] ) {
@@ -58,13 +58,13 @@ void screen_draw(
 {
   int ipos = static_cast<int>(position);
   screen[ipos] = symbol;
-  // if(speed < 0.0) {
-  //   if(position < maxColumn-1 && charvalid(screen[ipos+1])) screen[ipos+1] = tail_long;
-  //   if(position < maxColumn-2 && charvalid(screen[ipos+2])) screen[ipos+2] = tail_short;
-  // } else {
-  //   if(position > minColumn+1 && charvalid(screen[ipos-1])) screen[ipos-1] = tail_long;
-  //   if(position > minColumn+2 && charvalid(screen[ipos-2])) screen[ipos-2] = tail_short;
-  // }
+  if(speed < 0.0) {
+    if(position < maxColumn-1 && charvalid(screen[ipos+1])) screen[ipos+1] = tail_long;
+    if(position < maxColumn-2 && charvalid(screen[ipos+2])) screen[ipos+2] = tail_short;
+  } else {
+    if(position > minColumn+1 && charvalid(screen[ipos-1])) screen[ipos-1] = tail_long;
+    if(position > minColumn+2 && charvalid(screen[ipos-2])) screen[ipos-2] = tail_short;
+  }
 }
 
 void screen_print( char screen[80] ) {
