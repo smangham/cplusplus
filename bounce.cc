@@ -7,8 +7,9 @@ struct Particle {
   char sym;
 };
 
-void screen_clear(char[]), screen_print(char[]);
-void screen_draw(const Particle *const p, char[]);
+void particle_init( Particle *const, const float, const float, const char);
+void screen_clear(char *const), screen_print(const char *const);
+void screen_draw(const Particle *const, char *const);
 bool charvalid(const char);
 
 const char tail_short = ' ';
@@ -16,18 +17,15 @@ const char tail_long = '~';
 const int maxColumn = 79;
 const int minColumn =  0;
 
-char screen[maxColumn];
-
-
 void move( Particle *const p ) {
   p->pos += p->vel;
 
   if (p->pos >= maxColumn) {
     p->pos = maxColumn;
-    p->vel *= -1;
+    p->vel *= -1.0;
   } else if (p->pos <= minColumn) {
     p->pos = minColumn;
-    p->vel *= -1;
+    p->vel *= -1.0;
   } 
 }
 
@@ -36,10 +34,10 @@ int main() {
   const int stopTime = 60;
   const int num_particles = 3;
   char* screen = new char[maxColumn+1];
-
-  Particle p[num_particles] = {{0,   6.3,  'x'}, 
-                               {79,  -4.4, '+'},
-                               {50,  3.0,  'o'}}; //VERY OBSCURE AND SIMPLE
+  Particle *p = new Particle[3];
+  particle_init(&p[0],  0,   6.3, 'x');
+  particle_init(&p[1], 79,  -4.4, 'o');
+  particle_init(&p[2], 50,   3.0, '+');
 
   while (timeStep < stopTime) {
     screen_clear(screen);
@@ -54,13 +52,13 @@ int main() {
   delete [] screen;
 }
 
-void screen_clear( char screen[] ) {
+void screen_clear( char *const screen ) {
   for (int i = 0; i <= maxColumn; i++) {
     screen[i] = ' ';
   }  
 }
 
-void screen_draw( const Particle *const p, char screen[])
+void screen_draw( const Particle *const p, char *const screen )
 {
   int ipos = static_cast<int>(p->pos);
   screen[ipos] = p->sym;
@@ -73,7 +71,14 @@ void screen_draw( const Particle *const p, char screen[])
   }
 }
 
-void screen_print( char screen[] ) {
+void particle_init( Particle *const p, const float position, const float velocity, const char symbol )
+{
+  p->pos = position;
+  p->vel = velocity;
+  p->sym = symbol;
+}
+
+void screen_print( char const *const screen ) {
   for(int i=0; i<=maxColumn; i++)
   {
     std::cout << screen[i];
