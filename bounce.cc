@@ -37,10 +37,9 @@ int main() {
   const int num_particles = 3;
   char* screen = new char[maxColumn+1];
 
-  Particle* p = new Particle[num_particles];
-  p[1].vel = 6.3;   p[1].pos = 0;   p[1].sym = 'x';
-  p[2].vel = -4.0;  p[2].pos = 79;  p[2].sym = '+';
-  p[3].vel = 3.0;   p[3].pos = 50;  p[3].sym = 'o';
+  Particle p[num_particles] = {{0,   6.3,  'x'}, 
+                               {79,  -4.4, '+'},
+                               {50,  3.0,  'o'}}; //VERY OBSCURE AND SIMPLE
 
   while (timeStep < stopTime) {
     screen_clear(screen);
