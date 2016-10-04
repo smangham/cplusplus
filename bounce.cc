@@ -7,29 +7,17 @@ struct Particle {
   char sym;
 };
 
-void screen_clear(char[]), screen_print(char[]);
-void screen_draw(Particle& p, char[]);
+void screen_clear(char[]), screen_print(const char[]);
+void screen_draw(const Particle *p, char[]);
 bool charvalid(const char);
+void move(Particle *p);
 
-const char tail_short = ' ';
-const char tail_long = '~';
+const char tail_short = '-';
+const char tail_long = '=';
 const int maxColumn = 79;
 const int minColumn =  0;
 
 char screen[maxColumn];
-
-
-void move( Particle& p ) {
-  p.pos += p.vel;
-
-  if (p.pos >= maxColumn) {
-    p.pos = maxColumn;
-    p.vel *= -1;
-  } else if (p.pos <= minColumn) {
-    p.pos = minColumn;
-    p.vel *= -1;
-  } 
-}
 
 int main() {
   int timeStep = 0;
@@ -45,8 +33,8 @@ int main() {
     screen_clear(screen);
     for(int i=0; i<num_particles; i++)
     {
-      screen_draw(p[i], screen);
-      move(p[i]);
+      screen_draw(&p[i], screen);
+      move(&p[i]);
     }
     screen_print(screen);
     timeStep++;
@@ -60,11 +48,11 @@ void screen_clear( char screen[] ) {
   }  
 }
 
-void screen_draw( Particle& p, char screen[])
+void screen_draw( const Particle *p, char screen[])
 {
-  int ipos = static_cast<int>(p.pos);
-  screen[ipos] = p.sym;
-  if(p.vel < 0.0) {
+  int ipos = static_cast<int>(p->pos);
+  screen[ipos] = p->sym;
+  if(p->vel < 0.0) {
     if(ipos < maxColumn-1 && charvalid(screen[ipos+1])) screen[ipos+1] = tail_long;
     if(ipos < maxColumn-2 && charvalid(screen[ipos+2])) screen[ipos+2] = tail_short;
   } else {
@@ -73,12 +61,24 @@ void screen_draw( Particle& p, char screen[])
   }
 }
 
-void screen_print( char screen[] ) {
+void screen_print( const char screen[] ) {
   for(int i=0; i<=maxColumn; i++)
   {
     std::cout << screen[i];
   }
   std::cout << std::endl;
+}
+
+void move( Particle* p ) {
+  p->pos += p->vel;
+
+  if (p->pos >= maxColumn) {
+    p->pos = maxColumn;
+    p->vel *= -1;
+  } else if (p->pos <= minColumn) {
+    p->pos = minColumn;
+    p->vel *= -1;
+  } 
 }
 
 bool charvalid( const char test ) {
