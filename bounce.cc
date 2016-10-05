@@ -44,11 +44,9 @@ private:
 
 class Particle {
 public:
-  void init( const float pos, const float vel, const char sym ) {
-    this->pos = pos;
-    this->vel = vel;
-    this->sym = sym;
-  }
+  Particle () { return; };
+  Particle ( const float pos, const float vel, const char sym ) : 
+    pos(pos), vel(vel), sym(sym) { return; };
 
   void move() {
     this->pos += this->vel;
@@ -83,9 +81,9 @@ int main() {
   const int num_particles = 3;
   Particle *p = new Particle[num_particles];
   Screen screen(1+(maxColumn-minColumn));
-  p[0].init( 0,  6.3, 'x');
-  p[1].init(79, -4.4, 'o');
-  p[2].init(50,  3.0, '+');
+  p[0] = Particle( 0,  6.3, 'x');
+  p[1] = Particle(79, -4.4, 'o');
+  p[2] = Particle(50,  3.0, '+');
 
   while (timeStep < stopTime) {
     screen.clear();
