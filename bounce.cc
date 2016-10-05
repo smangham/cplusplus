@@ -1,7 +1,6 @@
 // N.B. This program contains a bug, on purpose.
 #include <iostream>
 
-bool charvalid(const char);
 
 const char tail_short = '-';
 const char tail_long = '=';
@@ -9,19 +8,28 @@ const int maxColumn = 79;
 const int minColumn =  0;
 
 class Screen {
-private:
-  char *screen;
-  unsigned width;
 public:
+  Screen ( unsigned width ) {
+    //std::cout << "Width is " << width << std::endl;
+    this->width   = width;
+    this->screen  = new char[width];
+  }
+  Screen ( const Screen& s) {
+    this->width   = s.width;
+    this->screen  = new char[s.width];
+    for(int i=0; i< s.width; i++) {
+      this->screen[i] = s.screen[i];
+    }
+    std::cout << "Copying screen of width "<<s.width<<std::endl;
+  }
+  ~Screen () {
+    delete [] this->screen;
+  }
   void draw( const int pos, const char sym ) {
     if(pos >= 0 && pos < this->width && charvalid(this->screen[pos]))
     {
       this->screen[pos] = sym;
     }
-  }
-  void init( unsigned width ) {
-    this->screen = new char[width];
-    this->width = width;
   }
   void clear() {
     for (int i = 0; i < this->width; i++) {
@@ -35,15 +43,15 @@ public:
     }
     std::cout << std::endl;    
   }
-  void destroy() {
-    delete [] this->screen;    
+private:
+  char *screen;
+  unsigned width;
+  bool charvalid( const char test ) {
+    return( test == ' ' || test == '-');
   }
 };
 
 class Particle {
-private:
-  float pos, vel;
-  char sym;
 public:
   void init( const float pos, const float vel, const char sym ) {
     this->pos = pos;
@@ -62,18 +70,20 @@ public:
       this->vel *= -1.0;
     }     
   }
-
-  void draw( Screen *const screen ) const {
+  void draw( Screen screen ) const {
     int ipos = static_cast<int>(this->pos);
-    screen->draw(ipos, this->sym);
-    if(this->vel < 0.0) {
-      screen->draw(ipos+1, tail_long);
-      screen->draw(ipos+2, tail_short);
-    } else {
-      screen->draw(ipos-1, tail_long);
-      screen->draw(ipos-2, tail_short);
-    }
+    screen.draw(ipos, this->sym);
+    // if(this->vel < 0.0) {
+    //   screen->draw(ipos+1, tail_long);
+    //   screen->draw(ipos+2, tail_short);
+    // } else {
+    //   screen->draw(ipos-1, tail_long);
+    //   screen->draw(ipos-2, tail_short);
+    // }
   }
+private:
+  float pos, vel;
+  char sym;
 };
 
 int main() {
@@ -81,8 +91,7 @@ int main() {
   const int stopTime = 60;
   const int num_particles = 3;
   Particle *p = new Particle[num_particles];
-  Screen *screen = new Screen;
-  screen->init(1+(maxColumn-minColumn));
+  Screen *screen = new Screen(1+(maxColumn-minColumn));
   p[0].init( 0,  6.3, 'x');
   p[1].init(79, -4.4, 'o');
   p[2].init(50,  3.0, '+');
@@ -91,16 +100,13 @@ int main() {
     screen->clear();
     for(int i=0; i<num_particles; i++)
     {
-      p[i].draw(screen);
+      p[i].draw(*screen);
       p[i].move();
     }
     screen->print();
     timeStep++;
   }
-  screen->destroy();
+  delete screen;
   delete [] p;
 }
 
-bool charvalid( const char test ) {
-  return( test == ' ' || test == '-');
-}
