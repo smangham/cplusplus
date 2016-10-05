@@ -9,15 +9,9 @@ const int minColumn =  0;
 
 class Screen {
 public:
-  Screen ( unsigned width ) {
-    this->width   = width;
-    this->screen  = new char[width];
-  }
-  Screen ( const Screen& s ) {
-    this->width   = s.width;
-    this->screen  = new char[width];
+  Screen ( unsigned width )   : width(width),   screen(new char[width])   { return; }
+  Screen ( const Screen& s )  : width(s.width), screen(new char[s.width]) {
     std::copy(s.screen, s.screen+s.width, this->screen);
-    //std::cout << "Copying screen of width "<<s.width<<std::endl;
   }
   ~Screen () {
     delete [] this->screen;
@@ -41,8 +35,8 @@ public:
     std::cout << std::endl;    
   }
 private:
+  const unsigned width;
   char *screen;
-  unsigned width;
   bool charvalid( const char test ) {
     return( test == ' ' || test == '-');
   }
