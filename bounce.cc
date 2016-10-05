@@ -10,17 +10,14 @@ const int minColumn =  0;
 class Screen {
 public:
   Screen ( unsigned width ) {
-    //std::cout << "Width is " << width << std::endl;
     this->width   = width;
     this->screen  = new char[width];
   }
-  Screen ( const Screen& s) {
+  Screen ( const Screen& s ) {
     this->width   = s.width;
-    this->screen  = new char[s.width];
-    for(int i=0; i< s.width; i++) {
-      this->screen[i] = s.screen[i];
-    }
-    std::cout << "Copying screen of width "<<s.width<<std::endl;
+    this->screen  = new char[width];
+    std::copy(s.screen, s.screen+s.width, this->screen);
+    //std::cout << "Copying screen of width "<<s.width<<std::endl;
   }
   ~Screen () {
     delete [] this->screen;
@@ -70,16 +67,16 @@ public:
       this->vel *= -1.0;
     }     
   }
-  void draw( Screen screen ) const {
+  void draw( Screen& screen ) const {
     int ipos = static_cast<int>(this->pos);
     screen.draw(ipos, this->sym);
-    // if(this->vel < 0.0) {
-    //   screen->draw(ipos+1, tail_long);
-    //   screen->draw(ipos+2, tail_short);
-    // } else {
-    //   screen->draw(ipos-1, tail_long);
-    //   screen->draw(ipos-2, tail_short);
-    // }
+    if(this->vel < 0.0) {
+      screen.draw(ipos+1, tail_long);
+      screen.draw(ipos+2, tail_short);
+    } else {
+      screen.draw(ipos-1, tail_long);
+      screen.draw(ipos-2, tail_short);
+    }
   }
 private:
   float pos, vel;
@@ -91,22 +88,21 @@ int main() {
   const int stopTime = 60;
   const int num_particles = 3;
   Particle *p = new Particle[num_particles];
-  Screen *screen = new Screen(1+(maxColumn-minColumn));
+  Screen screen(1+(maxColumn-minColumn));
   p[0].init( 0,  6.3, 'x');
   p[1].init(79, -4.4, 'o');
   p[2].init(50,  3.0, '+');
 
   while (timeStep < stopTime) {
-    screen->clear();
+    screen.clear();
     for(int i=0; i<num_particles; i++)
     {
-      p[i].draw(*screen);
+      p[i].draw(screen);
       p[i].move();
     }
-    screen->print();
+    screen.print();
     timeStep++;
   }
-  delete screen;
   delete [] p;
 }
 
