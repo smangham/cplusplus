@@ -39,9 +39,7 @@ public:
   //   return *this;
   // }
   Screen& operator=( Screen other) {
-    using std::swap;
-    swap(this->buffer, other.buffer);
-    swap(this->width,  other.width);
+    swap(*this, other);
     //This lets us swap every member easily. 
     //We just need a swap function for each type in the same scope the type is defined in 
     return *this;
@@ -81,12 +79,8 @@ public:
   // OPERATORS
   friend void swap(Particle& one, Particle& two);
   friend std::ostream& operator<<(std::ostream& os, const Particle &p);
-  Particle& operator=( const Particle& other ) {
-    if(this != &other) {
-      this->pos = other.pos;
-      this->vel = other.vel;
-      this->sym = other.sym;
-    }
+  Particle& operator=( Particle other ) {
+    swap(*this, other);
     return (*this);
   }
   // MEMBERS
