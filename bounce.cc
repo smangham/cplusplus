@@ -9,34 +9,55 @@ const int minColumn =  0;
 
 class Screen {
 public:
-  Screen ( unsigned width )   : width(width),   screen(new char[width])   { return; }
-  Screen ( const Screen& s )  : width(s.width), screen(new char[s.width]) {
-    std::copy(s.screen, s.screen+s.width, this->screen);
+  // CONSTRUCTORS
+  Screen ( unsigned width )       : width(width),       buffer(new char[width]      ) { return; }
+  Screen ( const Screen& other )  : width(other.width), buffer(new char[other.width]) {
+    std::copy(other.buffer, other.buffer+other.width, this->buffer);
   }
   ~Screen () {
-    delete [] this->screen;
+    delete [] this->buffer;
   }
-  void draw( const int pos, const char sym ) {
-    if(pos >= 0 && pos < this->width && charvalid(this->screen[pos]))
-    {
-      this->screen[pos] = sym;
+  //OPERATORS
+  char& operator[]( const int pos ) {
+    if(pos >= 0 && pos < this->width && charvalid(this->buffer[pos])) {
+      return(buffer[pos]);
+    } else {
+      //Aha! We need more advanced C++ techniques here, or to not use this technique
+      return(junk);
     }
+  };
+  Screen& operator=( const Screen& other) {
+    if(this != &other) {
+      if(this->width != other.width) {
+        delete [] this->buffer;
+        this->buffer = new char[other.width];
+        this->width = other.width;
+      }
+      std::copy(other.buffer, other.buffer+other.width, this->buffer);
+    }
+    return(*this);
   }
+  //MEMBERS
+  // void draw( const int pos, const char sym ) {
+  //   if(pos >= 0 && pos < this->width && charvalid(this->buffer[pos])) {
+  //     this->buffer[pos] = sym;
+  //   }
+  // }
   void clear() {
-    for (int i = 0; i < this->width; i++) {
-      this->screen[i] = ' ';
+    for (unsigned i = 0; i < this->width; i++) {
+      this->buffer[i] = ' ';
     }  
   }
   void print() const {
     for(int i=0; i< this->width; i++)
     {
-      std::cout << this->screen[i];
+      std::cout << this->buffer[i];
     }
     std::cout << std::endl;    
   }
 private:
-  const unsigned width;
-  char *screen;
+  unsigned width;
+  char *buffer, junk;
   bool charvalid( const char test ) {
     return( test == ' ' || test == '-');
   }
@@ -44,10 +65,21 @@ private:
 
 class Particle {
 public:
-  Particle () { return; };
+  // CONSTRUCTORS
+  Particle () : pos(0), vel(0), sym('?') { return; };
   Particle ( const float pos, const float vel, const char sym ) : 
     pos(pos), vel(vel), sym(sym) { return; };
-
+  // OPERATORS
+  friend std::ostream& operator<<(std::ostream& os, const Particle &p);
+  Particle& operator=( const Particle& other ) {
+    if(this != &other) {
+      this->pos = other.pos;
+      this->vel = other.vel;
+      this->sym = other.sym;
+    }
+    return (*this);
+  }
+  // MEMBERS
   void move() {
     this->pos += this->vel;
 
@@ -61,13 +93,18 @@ public:
   }
   void draw( Screen& screen ) const {
     int ipos = static_cast<int>(this->pos);
-    screen.draw(ipos, this->sym);
+    //screen.draw(ipos, this->sym);
+    screen[ipos] = this->sym;
     if(this->vel < 0.0) {
-      screen.draw(ipos+1, tail_long);
-      screen.draw(ipos+2, tail_short);
+      screen[ipos+2] = tail_short;
+      screen[ipos+1] = tail_long;
+      //screen.draw(ipos+1, tail_long);
+      //screen.draw(ipos+2, tail_short);
     } else {
-      screen.draw(ipos-1, tail_long);
-      screen.draw(ipos-2, tail_short);
+      screen[ipos-2] = tail_short;
+      screen[ipos-1] = tail_long;
+      //screen.draw(ipos-1, tail_long);
+      //screen.draw(ipos-2, tail_short);
     }
   }
 private:
@@ -75,13 +112,18 @@ private:
   char sym;
 };
 
+std::ostream& operator<<(std::ostream& os, const Particle &p) {
+  return os << p.sym << ", Pos: " << p.pos << ", Vel: " << p.vel;
+}
+
 int main() {
   int timeStep = 0;
   const int stopTime = 60;
   const int num_particles = 3;
-  Particle *p = new Particle[num_particles];
   Screen screen(1+(maxColumn-minColumn));
-  p[0] = Particle( 0,  6.3, 'x');
+  Particle p[num_particles];
+  // = {Particle(0,  6.3, 'x'), Particle(79, -4.4, 'o'), Particle(50,  3.0, '+')}; Better declaration
+  p[0] = Particle(0,  6.3, 'x');
   p[1] = Particle(79, -4.4, 'o');
   p[2] = Particle(50,  3.0, '+');
 
@@ -95,6 +137,8 @@ int main() {
     screen.print();
     timeStep++;
   }
-  delete [] p;
+  for(int i=0; i<num_particles; i++) {
+    std::cout << p[i] << std::endl;
+  }
 }
 
