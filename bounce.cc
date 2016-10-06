@@ -8,7 +8,7 @@
 int main() {
   int timeStep = 0;
   const int stopTime = 60;
-  int num_particles = -1;
+  int num_particles = 0;
   double pos, vel;
   char sym;
   Particle* p;
@@ -21,10 +21,11 @@ int main() {
     return EXIT_FAILURE;
   } else {
     std::cout << "Reading";
-    while(!in.eof()) {
-      in >> sym >> pos >> vel;
+    in >> sym >> pos >> vel;
+    while(!in.eof() && in.good()) {
       std::cout << ".";
       num_particles++;
+      in >> sym >> pos >> vel;
     }
     p = new Particle[num_particles];
     in.close(); // Couldn't find reset
