@@ -18,24 +18,33 @@ public:
     delete [] this->buffer;
   }
   //OPERATORS
+  friend void swap(Screen& one, Screen& two);
   char& operator[]( const int pos ) {
     if(pos >= 0 && pos < this->width && charvalid(this->buffer[pos])) {
-      return(buffer[pos]);
+      return buffer[pos];
     } else {
       //Aha! We need more advanced C++ techniques here, or to not use this technique
-      return(junk);
+      return junk;
     }
   };
-  Screen& operator=( const Screen& other) {
-    if(this != &other) {
-      if(this->width != other.width) {
-        delete [] this->buffer;
-        this->buffer = new char[other.width];
-        this->width = other.width;
-      }
-      std::copy(other.buffer, other.buffer+other.width, this->buffer);
-    }
-    return(*this);
+  // Screen& operator=( const Screen& other) {
+  //   if(this != &other) {
+  //     if(this->width != other.width) {
+  //       delete [] this->buffer;
+  //       this->buffer = new char[other.width];
+  //       this->width = other.width;
+  //     }
+  //     std::copy(other.buffer, other.buffer+other.width, this->buffer);
+  //   }
+  //   return *this;
+  // }
+  Screen& operator=( Screen other) {
+    using std::swap;
+    swap(this->buffer, other.buffer);
+    swap(this->width,  other.width);
+    //This lets us swap every member easily. 
+    //We just need a swap function for each type in the same scope the type is defined in 
+    return *this;
   }
   //MEMBERS
   // void draw( const int pos, const char sym ) {
@@ -70,6 +79,7 @@ public:
   Particle ( const float pos, const float vel, const char sym ) : 
     pos(pos), vel(vel), sym(sym) { return; };
   // OPERATORS
+  friend void swap(Particle& one, Particle& two);
   friend std::ostream& operator<<(std::ostream& os, const Particle &p);
   Particle& operator=( const Particle& other ) {
     if(this != &other) {
@@ -112,6 +122,18 @@ private:
   char sym;
 };
 
+void swap(Screen& one, Screen& two) {
+  using std::swap;
+  swap(one.width,  two.width);
+  swap(one.buffer, two.buffer);
+}
+void swap(Particle& one, Particle& two) {
+  using std::swap;
+  swap(one.sym, two.sym);
+  swap(one.pos, two.pos);
+  swap(one.vel, two.vel);
+}
+
 std::ostream& operator<<(std::ostream& os, const Particle &p) {
   return os << p.sym << ", Pos: " << p.pos << ", Vel: " << p.vel;
 }
@@ -126,6 +148,9 @@ int main() {
   p[0] = Particle(0,  6.3, 'x');
   p[1] = Particle(79, -4.4, 'o');
   p[2] = Particle(50,  3.0, '+');
+
+  Screen test_screen(9);
+  test_screen = screen;
 
   while (timeStep < stopTime) {
     screen.clear();
