@@ -9,17 +9,21 @@ int main() {
   int timeStep = 0;
   const int stopTime = 60;
   int num_particles = 0;
-  double pos, vel;
-  char sym;
+
+  std::string filename("particles.dat");
+  
   Particle* p;
   Screen screen(1+(maxColumn-minColumn));
 
   //Particle P = {Particle(0,  6.3, 'x'), Particle(79, -4.4, 'o'), Particle(50,  3.0, '+')}; Better declaration
-  std::ifstream in("particles.dat");
+  std::ifstream in(filename.c_str());
   if(!in) {
-    std::cerr << "Could not open file!" << std::endl;
+    std::cerr << "Could not open file " << filename << std::endl;
     return EXIT_FAILURE;
   } else {
+    double pos, vel;
+    char sym;
+      
     std::cout << "Reading";
     in >> sym >> pos >> vel;
     while(!in.eof() && in.good()) {
@@ -28,15 +32,16 @@ int main() {
       in >> sym >> pos >> vel;
     }
     p = new Particle[num_particles];
-    in.close(); // Couldn't find reset
-    in.open("particles.dat");
+    in.clear(); // Couldn't find reset
+    in.seekg(0, std::ios::beg);
   }
 
   std::cout << " found " << num_particles << " particles." << std::endl;
 
   for(int i=0; i<num_particles; i++) {
+    double pos, vel;
+    char sym;  
     in >> pos >> vel >> sym;
-    std::cout << pos << vel << sym << std::endl;
     if(in.good()) {
       p[i] = Particle(pos, vel, sym);
       std::cout << "(" << i+1 << "/" << num_particles << ") " << p[i] << std::endl;
