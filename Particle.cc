@@ -18,22 +18,7 @@ void Particle::draw( Screen& screen ) const {
   // }
 }
 
-void Particle::move() {
-  this->pos += this->vel;
 
-  if (this->pos >= maxColumn) {
-    this->pos = maxColumn;
-    this->vel *= -1.0;
-  } else if (this->pos <= minColumn) {
-    this->pos = minColumn;
-    this->vel *= -1.0;
-  }     
-}
-
-Particle& Particle::operator=( Particle other ) {
-  swap(*this, other);
-  return (*this);
-}
 
 
 void swap(Particle& one, Particle& two) {
@@ -47,6 +32,40 @@ std::ostream& operator<<(std::ostream& os, const Particle &p) {
   return os << p.sym << ", Pos: " << p.pos << ", Vel: " << p.vel;
 }
 
-std::istream& operator>>(std::istream& os, Particle &p) {
+
+void RealParticle::move() {
+  this->pos += this->vel;
+
+  if (this->pos >= maxColumn) {
+    this->pos = maxColumn;
+    this->vel *= -1.0;
+  } else if (this->pos <= minColumn) {
+    this->pos = minColumn;
+    this->vel *= -1.0;
+  }     
+}
+std::istream& operator>>(std::istream& os, RealParticle &p) {
   return os >> p.pos >> p.vel >> p.sym;
+}
+RealParticle& RealParticle::operator=( RealParticle other ) {
+  swap(*this, other);
+  return (*this);
+}
+
+
+void MagicParticle::move() {
+  this->pos += this->vel;
+
+  if (this->pos >= maxColumn) {
+    this->pos = minColumn;
+  } else if (this->pos <= minColumn) {
+    this->pos = maxColumn;
+  }     
+}
+std::istream& operator>>(std::istream& os, MagicParticle &p) {
+  return os >> p.pos >> p.vel >> p.sym;
+}
+MagicParticle& MagicParticle::operator=( MagicParticle other ) {
+  swap(*this, other);
+  return (*this);
 }

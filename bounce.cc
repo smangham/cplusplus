@@ -1,38 +1,74 @@
 // N.B. This program contains a bug, on purpose.
+#include <fstream>
 #include <iostream>
 #include <cstdlib>
+#include <vector>
 #include "Screen.hh"
 #include "Particle.hh"
-#include "Array.hh"
+//#include "Array.hh"
 
 int main() {
-  int timeStep = 0, index;
+  int timeStep = 0;
   const int stopTime = 60;
 
   std::string filename("particles.dat");
   
-  Array<Particle> p;
+  std::vector<Particle*> p;
   Screen screen(1+(maxColumn-minColumn));
 
-  //Particle P = {Particle(0,  6.3, 'x'), Particle(79, -4.4, 'o'), Particle(50,  3.0, '+')}; Better declaration
-  if(p.load_pb(filename.c_str()) == EXIT_FAILURE) {
+  std::ifstream in(filename.c_str());
+  std::cout << "Reading from "<<filename;
+ 
+  if(!in) {
+    std::cerr << "Could not open file " << filename << std::endl;
     return EXIT_FAILURE;
+  } else {
+    RealParticle* temp;
+    MagicParticle* temp_magic;
+    char type;
+      
+    while(in) {
+      in >> type;
+      std::cout << ".";
+      if(!in) {
+        break;
+      } else {
+        if(type == 'm') {
+          temp_magic = new MagicParticle();
+          in >> *temp_magic;
+          p.push_back(temp_magic);
+        } else {
+          temp = new RealParticle();
+          in >> *temp;
+          p.push_back(temp);
+        }
+      }
+    }
+    std::cout << std::endl;
   }
-  Particle p_add(1.0,1.0,'#');
-  index = p.push_back(p_add);
-  std::cout << "Added " << (p[index]) << std::endl;
+
+  for(int i=0; i<p.size(); i++) {
+    std::cout << *p[i] << std::endl;
+  }
+
+  Particle *p_add = new RealParticle(1.0,1.0,'#');
+  p.push_back(p_add);
+  std::cout << "Added " << (*p[p.size()-1]) << std::endl;
 
   while (timeStep < stopTime) {
     screen.clear();
-    for(int i=0; i<p.entries(); i++)
+    for(int i=0; i<p.size(); i++)
     {
-      p[i].draw(screen);
-      p[i].move();
+      p[i]->draw(screen);
+      p[i]->move();
     }
     screen.print();
     timeStep++;
   }
-  std::cout << p;
+  for(int i=0; i<p.size(); i++) {
+    std::cout << *p[i] << std::endl;
+    delete p[i];
+  }
   return EXIT_SUCCESS;
 }
 
