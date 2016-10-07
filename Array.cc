@@ -40,6 +40,29 @@ Particle& Array::operator[]( const unsigned pos ) {
   }
 }
 
+int Array::load_pb( const char *const filename ) {
+  std::ifstream in(filename);
+  std::cout << "Reading from "<<filename;
+ 
+  if(!in) {
+    std::cerr << "Could not open file " << filename << std::endl;
+    return EXIT_FAILURE;
+  } else {
+    while(in) {
+      Particle p;
+      in >> p;
+      std::cout << ".";
+      if(!in) {
+        break;
+      } else {
+        this->push_back(p);
+      }
+    }
+  }
+  std::cout << " " << *this;
+  return EXIT_SUCCESS; 
+}
+
 int Array::load( const char *const filename ) {
   std::ifstream in(filename);
   if(!in) {
@@ -51,6 +74,7 @@ int Array::load( const char *const filename ) {
       
     std::cout << "Reading";
     this->size = 0;
+    delete [] this;
     in >> sym >> pos >> vel;
     while(!in.eof() && in.good()) {
       std::cout << ".";
@@ -85,11 +109,11 @@ void Array::update( Screen& screen ) {
   }
 }
 
-int Array::push_back( Particle p ) {
-  Particle* array_copy = new Particle[++this->size];
+int Array::push_back( Particle& p ) {
+  Particle* array_copy = new Particle[this->size+1];
   std::copy(this->array, this->array+size, array_copy);
-  swap(array_copy[size-1], p);
+  swap(array_copy[size], p);
   delete[] this->array;
   this->array = array_copy;
-  return this->size-1;
+  return this->size++;
 }

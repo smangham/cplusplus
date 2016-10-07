@@ -21,7 +21,8 @@ public:
   // MEMBERS
   void update( Screen& screen );
   int load( const char *const );
-  int push_back( Particle p );
+  int load_pb( const char *const );
+  int push_back( Particle& p );
 private:
   unsigned size;
   Particle* array;
