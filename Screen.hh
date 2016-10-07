@@ -1,8 +1,6 @@
 #ifndef Screen_hh
 #define Screen_hh
 
-#include <iostream>
-
 class Screen {
 public:
   // CONSTRUCTORS
@@ -11,7 +9,7 @@ public:
   ~Screen() { delete [] this->buffer; };
   // OPERATORS
   friend void swap( Screen&, Screen& );
-  char& operator[] ( const int );
+  char& operator[] ( const unsigned );
   Screen& operator=( Screen );
   // MEMBERS
   void clear();

@@ -7,8 +7,8 @@ Screen::Screen ( const Screen& other )  : width(other.width), buffer(new char[ot
 }
 
 //OPERATORS
-char& Screen::operator[]( const int pos ) {
-  if(pos >= 0 && pos < this->width && charvalid(this->buffer[pos])) {
+char& Screen::operator[]( const unsigned pos ) {
+  if(pos < this->width && charvalid(this->buffer[pos])) {
     return buffer[pos];
   } else {
     //Aha! We need more advanced C++ techniques here, or to not use this technique

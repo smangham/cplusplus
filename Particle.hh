@@ -19,7 +19,8 @@ public:
     pos(pos), vel(vel), sym(sym)          { return; };
   // OPERATORS
   friend void swap(Particle& one, Particle& two);
-  friend std::ostream& operator<<(std::ostream& os, const Particle &p);
+  friend std::ostream& operator<<(std::ostream&, const Particle&);
+  friend std::istream& operator>>(std::istream&, Particle&);
   Particle& operator=( Particle );
   // MEMBERS
   void move();

@@ -1,71 +1,33 @@
 // N.B. This program contains a bug, on purpose.
 #include <iostream>
-#include <fstream>
 #include <cstdlib>
-#include "Particle.hh"
 #include "Screen.hh"
+#include "Particle.hh"
+#include "Array.hh"
 
 int main() {
-  int timeStep = 0;
+  int timeStep = 0, index;
   const int stopTime = 60;
-  int num_particles = 0;
 
   std::string filename("particles.dat");
   
-  Particle* p;
+  Array p;
   Screen screen(1+(maxColumn-minColumn));
 
   //Particle P = {Particle(0,  6.3, 'x'), Particle(79, -4.4, 'o'), Particle(50,  3.0, '+')}; Better declaration
-  std::ifstream in(filename.c_str());
-  if(!in) {
-    std::cerr << "Could not open file " << filename << std::endl;
+  if(p.load(filename.c_str()) == EXIT_FAILURE) {
     return EXIT_FAILURE;
-  } else {
-    double pos, vel;
-    char sym;
-      
-    std::cout << "Reading";
-    in >> sym >> pos >> vel;
-    while(!in.eof() && in.good()) {
-      std::cout << ".";
-      num_particles++;
-      in >> sym >> pos >> vel;
-    }
-    p = new Particle[num_particles];
-    in.clear(); // Couldn't find reset
-    in.seekg(0, std::ios::beg);
   }
-
-  std::cout << " found " << num_particles << " particles." << std::endl;
-
-  for(int i=0; i<num_particles; i++) {
-    double pos, vel;
-    char sym;  
-    in >> pos >> vel >> sym;
-    if(in.good()) {
-      p[i] = Particle(pos, vel, sym);
-      std::cout << "(" << i+1 << "/" << num_particles << ") " << p[i] << std::endl;
-    } else { 
-      std::cerr << "Error!" << std::endl;
-      return EXIT_FAILURE;
-    } 
-  }
-
-  std::cout << "Read in " << num_particles << " particles." << std::endl;
+  index = p.push_back(Particle(1.0,1.0,'#'));
+  std::cout << "Added " << (p[index]) << std::endl;
 
   while (timeStep < stopTime) {
     screen.clear();
-    for(int i=0; i<num_particles; i++)
-    {
-      p[i].draw(screen);
-      p[i].move();
-    }
+    p.update(screen);
     screen.print();
     timeStep++;
   }
-  std::cout << "Listing " << num_particles << " particles:" << std::endl;
-  for(int i=0; i<num_particles; i++) {
-    std::cout << p[i] << std::endl;
-  }
+  std::cout << p;
+  return EXIT_SUCCESS;
 }
 

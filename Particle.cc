@@ -1,22 +1,21 @@
 #include "Particle.hh"
 #include "Screen.hh"
 
-const int maxColumn = 80;
+const int maxColumn = 79;
 const int minColumn = 0;
 const char tail_short = '-';
 const char tail_long  = '=';
 
-
 void Particle::draw( Screen& screen ) const {
   int ipos = static_cast<int>(this->pos);
   screen[ipos] = this->sym;
-  if(this->vel < 0.0) {
-    screen[ipos+2] = tail_short;
-    screen[ipos+1] = tail_long;
-  } else {
-    screen[ipos-2] = tail_short;
-    screen[ipos-1] = tail_long;
-  }
+  // if(this->vel < 0.0) {
+  //   screen[ipos+2] = tail_short;
+  //   screen[ipos+1] = tail_long;
+  // } else {
+  //   screen[ipos-2] = tail_short;
+  //   screen[ipos-1] = tail_long;
+  // }
 }
 
 void Particle::move() {
@@ -46,4 +45,8 @@ void swap(Particle& one, Particle& two) {
 
 std::ostream& operator<<(std::ostream& os, const Particle &p) {
   return os << p.sym << ", Pos: " << p.pos << ", Vel: " << p.vel;
+}
+
+std::istream& operator>>(std::istream& os, Particle &p) {
+  return os >> p.pos >> p.vel >> p.sym;
 }
