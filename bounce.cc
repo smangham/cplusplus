@@ -5,19 +5,13 @@
 #include "Particle.hh"
 #include "Array.hh"
 
-myswap(int one, int two) {
-  swap(one, two);
-  int temp;
-  
-}
-
 int main() {
   int timeStep = 0, index;
   const int stopTime = 60;
 
   std::string filename("particles.dat");
   
-  Array p;
+  Array<Particle> p;
   Screen screen(1+(maxColumn-minColumn));
 
   //Particle P = {Particle(0,  6.3, 'x'), Particle(79, -4.4, 'o'), Particle(50,  3.0, '+')}; Better declaration
@@ -30,7 +24,11 @@ int main() {
 
   while (timeStep < stopTime) {
     screen.clear();
-    p.update(screen);
+    for(int i=0; i<p.entries(); i++)
+    {
+      p[i].draw(screen);
+      p[i].move();
+    }
     screen.print();
     timeStep++;
   }
